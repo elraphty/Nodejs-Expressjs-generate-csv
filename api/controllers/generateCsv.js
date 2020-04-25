@@ -6,6 +6,13 @@
 
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 const records = require('../data');
+const ResponseService = require('../services/responseService');
+const AWS = require("aws-sdk");
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS,
+    secretAccessKey: process.env.AWS_SECRET,
+});
 
 module.exports = {
 
@@ -15,16 +22,41 @@ module.exports = {
      * @param {Object} res
      */
     generateCsv: (req, res) => {
-        const csvStringifier = createCsvStringifier({
-            header: [
-                {id: 'name', title: 'NAME'},
-                {id: 'lang', title: 'LANGUAGE'}
-            ]
-        });
 
-        const csv = csvStringifier.stringifyRecords(records);
-        console.log('Csv ===', csv);
+        try {
+            const csvStringifier = createCsvStringifier({
+                header: [
+                    {id: 'name', title: 'NAME'},
+                    {id: 'lang', title: 'LANGUAGE'}
+                ]
+            });
 
-        return res.send('In csv route');
+            const csv = csvStringifier.stringifyRecords(records);
+
+            const params = {
+                Bucket: process.env.AWS_BUCKET, // pass your bucket name
+                Key: `users-${new Date().getTime()}.csv`, // file will be saved as testBucket/contacts.csv
+                ACL: "public-read",
+                Body: csv,
+                ContentType: "text/csv",
+            };
+
+            s3.upload(params, function (s3Err, data) {
+                if (s3Err) throw s3Err;
+                else {
+                return ResponseService.json(201, res, "File created successfully", {
+                    redirectUri: data.Location,
+                });
+                }
+            });
+
+        } catch(e) {
+            return ResponseService.json(
+                400,
+                res,
+                "Error Generating csv",
+                error.message
+            );
+        }
     }
 }
