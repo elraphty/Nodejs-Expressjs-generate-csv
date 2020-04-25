@@ -4,6 +4,9 @@
  * This file is the controller file for all csv functionalities
  */
 
+const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
+const records = require('../data');
+
 module.exports = {
 
     /**
@@ -12,6 +15,16 @@ module.exports = {
      * @param {Object} res
      */
     generateCsv: (req, res) => {
-        return res.send('In csv route')
+        const csvStringifier = createCsvStringifier({
+            header: [
+                {id: 'name', title: 'NAME'},
+                {id: 'lang', title: 'LANGUAGE'}
+            ]
+        });
+
+        const csv = csvStringifier.stringifyRecords(records);
+        console.log('Csv ===', csv);
+
+        return res.send('In csv route');
     }
 }
