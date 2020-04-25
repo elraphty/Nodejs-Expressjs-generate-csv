@@ -51,11 +51,9 @@ module.exports = {
             });
 
         } catch(e) {
-            return ResponseService.json(
-                400,
-                res,
-                "Error Generating csv",
-                error.message
+            return ResponseService.error(
+                e,
+                res
             );
         }
     }

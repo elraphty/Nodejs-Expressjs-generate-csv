@@ -1,8 +1,18 @@
 /**
+ * created by Raphael Osaze Eyerin
+ * on 25th of April 2020
  * responseService.js
  */
 
 module.exports = {
+    /**
+     * This function will return a success json reponse
+     * @param {Object} res
+     * @param {Integer} status
+     * @param {String} message
+     * @param {Object} data
+     * @param {Object} meta
+    */
     json: function(status, res, message, data, meta) {
         var response = {
             response: {
@@ -17,34 +27,17 @@ module.exports = {
         }
         return res.status(status).json(response);
     },
-    
+
+    /**
+     * This function will return an error json reponse
+     * @param {Object} err
+     * @param {Object} res
+    */
     error(err, res) {
         let response = {
-            message: 'Validation error has occured',
+            message: 'error has occured',
+            error: err.message
         };
-        if (err.Errors) {
-            response.errors = err.Errors;
-            return res.status(400).json(response);
-        }
-  
-        if (err.invalidAttributes){
-            response.errors = err.invalidAttributes;
-            return res.status(400).json(response);
-        }
-        /* istanbul ignore next */
-        let e = JSON.parse(JSON.stringify(err));
-        /* istanbul ignore next */
-        if (e.raw) {
-            /* istanbul ignore if */
-            if (e.raw.length && !_.isUndefined(e.raw[0].err)) {
-                response.errors = e.raw[0].err.Errors;
-            } else {
-                response.errors = e.raw;
-            }
-            return res.status(400).json(response);
-        }
-        /* istanbul ignore next */
-        // Raven.captureException(err);
-        return res.json(err);
+        return res.status(400).json(response);
     },
 };

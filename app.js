@@ -1,3 +1,9 @@
+/**
+ * created by Raphael Osaze Eyerin
+ * on 25th of April 2020
+ * app.js This file is the app index file
+ */
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
