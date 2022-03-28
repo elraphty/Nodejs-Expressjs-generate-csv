@@ -31,7 +31,7 @@ module.exports = {
                 ]
             });
 
-            const csv = csvStringifier.stringifyRecords(records);
+            const csv = csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(records);
 
             const params = {
                 Bucket: process.env.AWS_BUCKET, // pass your bucket name
